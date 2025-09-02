@@ -1,0 +1,53 @@
+# Fast DDS with Application Build
+FROM fastdds:base
+
+# Instalar herramientas adicionales de desarrollo
+RUN apt-get update && apt-get install -y \
+    ninja-build \
+    gdb \
+    valgrind \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar el código fuente
+WORKDIR /opt/fastdds-app
+COPY CMakeLists.txt .
+COPY src/ ./src/
+COPY idl/ ./idl/
+COPY scripts/ ./scripts/
+
+# Crear directorios necesarios
+RUN mkdir -p build include gen
+
+# Compilar la aplicación
+WORKDIR /opt/fastdds-app/build
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -G Ninja && \
+    ninja -j$(nproc)
+
+# Script de ejecución
+RUN echo '#!/bin/bash\n\
+echo "==================================="\n\
+echo "Fast DDS GPU Application"\n\
+echo "==================================="\n\
+echo ""\n\
+echo "Available executables:"\n\
+ls -la /opt/fastdds-app/build/bin/\n\
+echo ""\n\
+if [ "$1" = "publisher" ]; then\n\
+    echo "Starting Fast DDS Publisher..."\n\
+    /opt/fastdds-app/build/bin/fastdds_publisher\n\
+elif [ "$1" = "subscriber" ]; then\n\
+    echo "Starting Fast DDS Subscriber..."\n\
+    /opt/fastdds-app/build/bin/fastdds_subscriber\n\
+else\n\
+    echo "Usage: docker run fastdds:app [publisher|subscriber]"\n\
+fi\n' > /opt/run_app.sh && \
+chmod +x /opt/run_app.sh
+
+# Puertos DDS
+EXPOSE 7400-7410/udp
+EXPOSE 7400-7410/tcp
+
+WORKDIR /opt/fastdds-app
+
+ENTRYPOINT ["/opt/run_app.sh"]
+CMD ["publisher"]

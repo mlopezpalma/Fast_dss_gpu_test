@@ -1,0 +1,8 @@
+struct GpuProcessedData
+{
+    long stream_id;
+    long kernel_id;
+    sequence<float, 1024> data;
+    float processing_time_ms;
+    long long timestamp_ns;
+};

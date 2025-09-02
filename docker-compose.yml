@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  fastdds-publisher:
+    image: fastdds:app
+    container_name: fastdds-publisher
+    hostname: publisher
+    networks:
+      - fastdds-network
+    environment:
+      - ROS_DOMAIN_ID=0
+    command: publisher
+    
+  fastdds-subscriber:
+    image: fastdds:app
+    container_name: fastdds-subscriber
+    hostname: subscriber
+    networks:
+      - fastdds-network
+    environment:
+      - ROS_DOMAIN_ID=0
+    command: subscriber
+    depends_on:
+      - fastdds-publisher
+
+networks:
+  fastdds-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

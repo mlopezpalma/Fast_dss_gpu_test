@@ -1,0 +1,46 @@
+version: '3.3'
+
+services:
+  gpu-publisher:
+    image: fastdds:gpu-integrated
+    container_name: gpu-dds-publisher
+    hostname: gpu-publisher
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    networks:
+      - gpu-dds-network
+    command: /opt/fastdds-gpu/build/bin/gpu_dds_publisher
+    volumes:
+      - ./logs:/opt/logs
+
+  gpu-subscriber:
+    image: fastdds:gpu-integrated
+    container_name: gpu-dds-subscriber
+    hostname: gpu-subscriber
+    networks:
+      - gpu-dds-network
+    command: /opt/fastdds-gpu/build/bin/gpu_dds_subscriber
+    depends_on:
+      - gpu-publisher
+    volumes:
+      - ./logs:/opt/logs
+
+  monitor:
+    image: fastdds:gpu-integrated
+    container_name: gpu-dds-monitor
+    hostname: monitor
+    networks:
+      - gpu-dds-network
+    command: bash -c "nvidia-smi && sleep infinity"
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+
+networks:
+  gpu-dds-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
