@@ -98,19 +98,84 @@ target_link_libraries(gpu_dds_subscriber_debug
 )
 
 # Fixed subscriber with correct QoS
+add_executable(gpu_dds_subscriber_fixed
+    src/gpu_dds_subscriber_fixed.cpp
+)
 
-# GPU DDS Benchmark
-add_executable(gpu_benchmark
-    src/gpu_dds_benchmark_fixed.cpp
+target_link_libraries(gpu_dds_subscriber_fixed
+    fastrtps
+    fastcdr
+    pthread
+)
+
+add_executable(simple_test
+    src/simple_test.cpp
+)
+
+target_link_libraries(simple_test
+    fastrtps
+    fastcdr
+    pthread
+)
+
+add_executable(gpu_dds_publisher_reliable
+    src/gpu_dds_publisher_reliable.cpp
+)
+
+target_link_libraries(gpu_dds_publisher_reliable
+    fastrtps
+    fastcdr
+    pthread
+)
+
+add_executable(fixed_transport_publisher
+    src/fixed_transport_publisher.cpp
+)
+target_link_libraries(fixed_transport_publisher
+    fastrtps
+    fastcdr
+    pthread
+)
+
+add_executable(fixed_transport_subscriber
+    src/fixed_transport_subscriber.cpp
+)
+target_link_libraries(fixed_transport_subscriber
+    fastrtps
+    fastcdr
+    pthread
+)
+
+add_executable(gpu_dds_benchmark
+    src/gpu_dds_benchmark.cpp
     src/gpu_kernels.cu
 )
 
-set_target_properties(gpu_benchmark PROPERTIES
+set_target_properties(gpu_dds_benchmark PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
     CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
-target_link_libraries(gpu_benchmark
+target_link_libraries(gpu_dds_benchmark
+    fastrtps
+    fastcdr
+    
+    cudart
+    cuda
+    pthread
+)
+
+add_executable(gpu_dds_benchmark_fixed
+    src/gpu_dds_benchmark_fixed.cpp
+    src/gpu_kernels.cu
+)
+
+set_target_properties(gpu_dds_benchmark_fixed PROPERTIES
+    CUDA_SEPARABLE_COMPILATION ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
+)
+
+target_link_libraries(gpu_dds_benchmark_fixed
     fastrtps
     fastcdr
     ${CUDA_LIBRARIES}
@@ -119,17 +184,17 @@ target_link_libraries(gpu_benchmark
     pthread
 )
 
-add_executable(gpu_parallel_benchmark
-    src/gpu_dds_benchmark_parallel.cpp
+add_executable(gpu_dds_benchmark_fixed
+    src/gpu_dds_benchmark_fixed.cpp
     src/gpu_kernels.cu
 )
 
-set_target_properties(gpu_parallel_benchmark PROPERTIES
+set_target_properties(gpu_dds_benchmark_fixed PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
     CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
-target_link_libraries(gpu_parallel_benchmark
+target_link_libraries(gpu_dds_benchmark_fixed
     fastrtps
     fastcdr
     ${CUDA_LIBRARIES}
