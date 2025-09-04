@@ -32,12 +32,12 @@ sudo apt-get update
 sudo apt-get install -y nvidia-container-toolkit
 sudo systemctl restart docker
 Step 2: Clone Repository
-bashgit clone https://github.com/mlopezpalma/Fast_dss_gpu_test.git
+git clone https://github.com/mlopezpalma/Fast_dss_gpu_test.git
 cd fastdds-gpu-project
 Step 3: Build Docker Image
-bashdocker build -t fastdds:fixed .
+docker build -t fastdds:gpu-fixed .
 Step 4: Verify Installation
-bash# Test GPU access
+# Test GPU access
 docker run --rm --gpus all fastdds:fixed nvidia-smi
 
 # List built executables
@@ -45,16 +45,16 @@ docker run --rm fastdds:fixed ls -la /opt/fastdds-gpu/build/
 💻 Usage
 Run Publisher-Subscriber Test
 Terminal 1 - Start Subscriber:
-bashdocker run --rm --network host fastdds:fixed \
+docker run --rm --network host fastdds:fixed \
     /opt/fastdds-gpu/build/gpu_dds_subscriber_fixed
 Terminal 2 - Start Publisher:
-bashdocker run --rm --gpus all --network host fastdds:fixed \
+docker run --rm --gpus all --network host fastdds:fixed \
     /opt/fastdds-gpu/build/gpu_dds_publisher_v2
 Run Performance Benchmark
-bashdocker run --rm --gpus all --network host fastdds:fixed \
+docker run --rm --gpus all --network host fastdds:fixed \
     /opt/fastdds-gpu/build/gpu_parallel_benchmark
 Simple Connection Test
-bashdocker run --rm --network host fastdds:fixed \
+docker run --rm --network host fastdds:fixed \
     /opt/fastdds-gpu/build/simple_test
 📊 Performance Results
 GPU: NVIDIA GeForce RTX 4060
@@ -82,10 +82,10 @@ fastdds-gpu-project/
 ExecutableDescriptiongpu_dds_publisher_v2GPU-accelerated publishergpu_dds_subscriber_fixedOptimized subscriber with correct QoSgpu_parallel_benchmarkParallel streams benchmarksimple_testBasic DDS connectivity testgpu_dds_publisher_reliablePublisher with reliable QoS
 📦 Docker Management
 Save Docker Image
-bashdocker save -o fastdds_backup.tar fastdds:fixed
+docker save -o fastdds_backup.tar fastdds:fixed
 gzip fastdds_backup.tar
 Load Docker Image
-bashgunzip fastdds_backup.tar.gz
+gunzip fastdds_backup.tar.gz
 docker load -i fastdds_backup.tar
 Clean Up
 bash# Remove unused images
@@ -98,14 +98,14 @@ docker builder prune
 docker system prune -a
 🐛 Troubleshooting
 GPU Not Detected
-bash# Verify NVIDIA runtime
+# Verify NVIDIA runtime
 docker run --rm --gpus all nvidia/cuda:11.8.0-base nvidia-smi
 
 # If fails, reinstall toolkit
 sudo apt-get install -y nvidia-container-toolkit
 sudo systemctl restart docker
 No Messages Received
-bash# Check network configuration
+# Check network configuration
 docker network ls
 
 # Use host network mode
