@@ -92,10 +92,10 @@ Note: First iteration includes initialization overhead
 cd ~/fastdds-gpu-project
 docker build -t fastdds:benchmark .
 Run Publisher Test
-bashdocker run --rm --gpus all --network host \
+docker run --rm --gpus all --network host \
     fastdds:fixed /opt/fastdds-gpu/build/gpu_dds_publisher_v2
 Run Benchmark
-bashdocker run --rm --gpus all --network host \
+docker run --rm --gpus all --network host \
     fastdds:benchmark /opt/fastdds-gpu/build/gpu_parallel_benchmark
 Conclusions
 The integration of FastDDS with GPU processing shows:
